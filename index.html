@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>DRB·PLUS — Share Your Visit</title>
+<meta name="description" content="Tell us about your visit to DRB PLUS Neuro-Psychiatric Clinic." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/logo-mark.png">
+<style>
+  :root{
+    --navy:#0C3359;
+    --teal:#3ACDCF;
+    --coral:#FB5847;
+    --cream:#F4F1EA;
+    --navy-soft:#0C335914;
+    --ink:#1B2A3B;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    min-height:100dvh;
+    display:flex;
+    justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  .stage{
+    width:100%;
+    max-width:480px;
+    min-height:100dvh;
+    padding:28px 22px 40px;
+    display:flex;
+    flex-direction:column;
+  }
+  .mark{
+    margin-bottom:32px;
+  }
+  .mark img{
+    height:38px;
+    width:auto;
+    display:block;
+  }
+  .screen{display:none; flex-direction:column; flex:1; animation:rise .5s ease;}
+  .screen.active{display:flex;}
+  @keyframes rise{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:32px;
+    line-height:1.15;
+    color:var(--navy);
+    margin:0 0 8px;
+  }
+  p.sub{
+    font-size:15px;
+    color:var(--ink);
+    opacity:.72;
+    margin:0 0 28px;
+    line-height:1.5;
+  }
+
+  /* Location chips */
+  .locrow{display:flex; gap:10px; margin-bottom:34px;}
+  .chip{
+    border:1px solid #0C335933;
+    background:transparent;
+    color:var(--navy);
+    padding:9px 16px;
+    border-radius:100px;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .chip.selected{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:#fff;
+  }
+
+  /* Stars */
+  .stars{
+    display:flex;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .star{
+    width:44px; height:44px;
+    cursor:pointer;
+    color:#0C335930;
+    transition:transform .12s ease, color .12s ease;
+  }
+  .star.lit{ color:var(--coral); }
+  .star:active{ transform:scale(0.88); }
+  .starhint{font-size:13px; color:var(--ink); opacity:.55; margin-bottom:30px; min-height:16px;}
+
+  /* Tag grid */
+  .taggrid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:22px;
+  }
+  .tag{
+    border:1px solid #0C335933;
+    background:#fff;
+    color:var(--navy);
+    padding:11px 15px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:500;
+    line-height:1.3;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .tag.selected{
+    background:var(--teal);
+    border-color:var(--teal);
+    color:var(--navy);
+    font-weight:600;
+  }
+
+  label.fieldlabel{
+    font-size:12.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--navy);
+    opacity:.6;
+    margin-bottom:8px;
+    display:block;
+  }
+  textarea.note{
+    width:100%;
+    border:1px solid #0C335933;
+    background:#fff;
+    border-radius:12px;
+    padding:12px 14px;
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    color:var(--ink);
+    resize:none;
+    margin-bottom:26px;
+  }
+  textarea.note:focus, .tag:focus-visible, .star:focus-visible, .chip:focus-visible, .btn:focus-visible{
+    outline:2px solid var(--navy);
+    outline-offset:2px;
+  }
+
+  .spacer{flex:1;}
+
+  .btn{
+    border:none;
+    border-radius:100px;
+    padding:16px 20px;
+    font-family:'Inter',sans-serif;
+    font-size:15.5px;
+    font-weight:600;
+    cursor:pointer;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:opacity .15s ease, transform .1s ease;
+  }
+  .btn:active{ transform:scale(0.98); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-primary{ background:var(--coral); color:#fff; }
+  .btn-navy{ background:var(--navy); color:#fff; }
+  .btn-ghost{
+    background:transparent;
+    color:var(--navy);
+    border:1px solid #0C335933;
+    margin-top:10px;
+  }
+  .btn-text{
+    background:none; border:none; color:var(--navy); opacity:.6;
+    font-size:13.5px; font-weight:500; margin-top:16px; cursor:pointer;
+    text-decoration:underline;
+  }
+
+  /* Prescription-style draft card */
+  .pad{
+    background:#fff;
+    border-radius:4px 4px 14px 14px;
+    box-shadow:0 18px 40px -20px #0C335955;
+    margin-bottom:20px;
+    overflow:hidden;
+    border:1px solid #0C335920;
+  }
+  .pad-perf{
+    height:14px;
+    background:repeating-linear-gradient(90deg, transparent 0 6px, #0C335930 6px 7px);
+    background-color:var(--navy);
+  }
+  .pad-head{
+    padding:18px 20px 14px;
+    border-bottom:1px dashed #0C335930;
+  }
+  .pad-head .who{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:19px;
+    color:var(--navy);
+  }
+  .pad-head .what{
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--navy);
+    opacity:.5;
+    margin-top:2px;
+  }
+  .pad-body{ padding:18px 20px 6px; }
+  textarea.draft{
+    width:100%;
+    min-height:150px;
+    border:none;
+    font-family:'Cormorant Garamond',serif;
+    font-size:19px;
+    line-height:1.5;
+    color:var(--ink);
+    resize:none;
+    background:transparent;
+  }
+  textarea.draft:focus{ outline:none; }
+
+  .loading{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    flex:1; gap:18px; text-align:center;
+  }
+  .pen{
+    width:26px; height:26px;
+    border:2.5px solid var(--navy);
+    border-top-color:var(--coral);
+    border-radius:50%;
+    animation:spin 0.85s linear infinite;
+  }
+  @keyframes spin{ to{transform:rotate(360deg);} }
+  .loading p{ font-size:14px; color:var(--navy); opacity:.65; }
+
+  .toast{
+    position:fixed;
+    bottom:24px; left:50%;
+    transform:translate(-50%, 20px);
+    background:var(--navy);
+    color:#fff;
+    padding:11px 20px;
+    border-radius:100px;
+    font-size:13.5px;
+    font-weight:500;
+    opacity:0;
+    transition:all .25s ease;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  .heart{width:52px; height:52px; margin-bottom:22px;}
+  .footnote{font-size:12px; color:var(--navy); opacity:.4; text-align:center; margin-top:22px;}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="mark"><img src="assets/logo.png" alt="DRB PLUS Neuro-Psychiatry Clinic"></div>
+
+  <!-- SCREEN 1: RATING -->
+  <div class="screen active" id="screen-rating">
+    <h1>How was your visit today?</h1>
+    <p class="sub">Your honest reaction helps us take care of the next person who walks in.</p>
+
+    <div class="locrow" id="locrow">
+      <button class="chip selected" data-loc="Margherita">Margherita</button>
+      <button class="chip" data-loc="Digboi">Digboi</button>
+    </div>
+
+    <div class="stars" id="stars">
+      <svg class="star" data-v="1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9L18.2 22 12 18.3 5.8 22 7 14.2l-5-4.9 7.1-.7z"/></svg>
+      <svg class="star" data-v="2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9L18.2 22 12 18.3 5.8 22 7 14.2l-5-4.9 7.1-.7z"/></svg>
+      <svg class="star" data-v="3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9L18.2 22 12 18.3 5.8 22 7 14.2l-5-4.9 7.1-.7z"/></svg>
+      <svg class="star" data-v="4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9L18.2 22 12 18.3 5.8 22 7 14.2l-5-4.9 7.1-.7z"/></svg>
+      <svg class="star" data-v="5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9L18.2 22 12 18.3 5.8 22 7 14.2l-5-4.9 7.1-.7z"/></svg>
+    </div>
+    <div class="starhint" id="starhint">&nbsp;</div>
+
+    <div class="spacer"></div>
+    <div class="footnote">DRB PLUS Neuro-Psychiatric Clinic</div>
+  </div>
+
+  <!-- SCREEN 2: WHAT STOOD OUT -->
+  <div class="screen" id="screen-tags">
+    <h1>What stood out?</h1>
+    <p class="sub">Pick anything that felt true. We'll turn it into a few sentences you can post as-is, or edit.</p>
+
+    <div class="taggrid" id="taggrid">
+      <button class="tag" data-tag="Dr. Borthakur listened patiently and didn't rush">Doctor listened patiently</button>
+      <button class="tag" data-tag="explained my treatment and medication clearly">Explained things clearly</button>
+      <button class="tag" data-tag="the clinic felt calm and comfortable, not clinical or cold">Calm, comfortable clinic</button>
+      <button class="tag" data-tag="I was seen close to my appointment time">On time / short wait</button>
+      <button class="tag" data-tag="the staff were courteous and helpful throughout">Staff were courteous</button>
+      <button class="tag" data-tag="I genuinely feel better after starting treatment here">Actually helped me</button>
+      <button class="tag" data-tag="they were understanding and non-judgemental about a difficult subject">Non-judgemental, understanding</button>
+      <button class="tag" data-tag="the follow-up and check-ins have been consistent">Good follow-up care</button>
+    </div>
+
+    <label class="fieldlabel" for="freetext">Anything else? (optional)</label>
+    <textarea class="note" id="freetext" rows="3" placeholder="A detail only you would know…"></textarea>
+
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btn-generate" disabled>Write my review</button>
+  </div>
+
+  <!-- SCREEN 3: LOADING -->
+  <div class="screen" id="screen-loading">
+    <div class="loading">
+      <div class="pen"></div>
+      <p>Putting your thoughts into words…</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: DRAFT -->
+  <div class="screen" id="screen-draft">
+    <h1>Here's a draft</h1>
+    <p class="sub">It's written from what you picked — read it over and change anything that doesn't sound like you.</p>
+
+    <div class="pad">
+      <div class="pad-perf"></div>
+      <div class="pad-head">
+        <div class="who">Patient Voice</div>
+        <div class="what" id="pad-loc">DRB PLUS · Margherita</div>
+      </div>
+      <div class="pad-body">
+        <textarea class="draft" id="draft-text" rows="6"></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-navy" id="btn-post">Post this to Google</button>
+    <button class="btn btn-ghost" id="btn-copy">Copy text instead</button>
+    <button class="btn-text" id="btn-regen">Write a different version</button>
+  </div>
+
+  <!-- SCREEN 5: PRIVATE FEEDBACK (low rating) -->
+  <div class="screen" id="screen-private">
+    <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="#0C3359" stroke-width="1.4"><path d="M12 21s-7.5-4.6-10-9.3C.5 8.2 2.6 4.5 6.3 4.5c2 0 3.6 1 4.7 2.6C12 5.5 13.6 4.5 15.7 4.5c3.7 0 5.8 3.7 4.3 7.2C17.5 16.4 12 21 12 21z"/></svg>
+    <h1>Thank you for saying so.</h1>
+    <p class="sub">We'd rather hear this directly than have it go unsaid. Tell Dr. Borthakur's clinic what happened, and we'll follow up personally.</p>
+    <div class="spacer"></div>
+    <a class="btn btn-navy" id="btn-whatsapp" href="#" style="text-decoration:none;">Message us on WhatsApp</a>
+    <div class="footnote">This won't be posted anywhere. It comes straight to the clinic.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+/* ====================== CONFIGURE THESE ====================== */
+const CONFIG = {
+  clinicName: "DRB PLUS Neuro-Psychiatric Clinic",
+  doctorName: "Dr. Biswadeep Borthakur",
+  // Replace with your actual Google review short link (Google Business Profile → "Ask for reviews" → copy link)
+  googleReviewUrl: "https://g.page/r/REPLACE_WITH_YOUR_PLACE_ID/review",
+  whatsappNumber: "919435166121", // country code + number, no plus or spaces
+  // Endpoint of the serverless proxy (see /api/generate-review.js). Leave as-is if deployed together on Vercel.
+  apiEndpoint: "/api/generate-review"
+};
+/* ================================================================ */
+
+let state = { location: "Margherita", rating: 0, tags: [], free: "" };
+
+const $ = (id) => document.getElementById(id);
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+// Location chips
+document.querySelectorAll('#locrow .chip').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#locrow .chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    state.location = el.dataset.loc;
+  });
+});
+
+// Stars
+const starHints = {1:"We're sorry to hear that.",2:"That's not the experience we want for you.",3:"Thanks — there's clearly room to improve.",4:"Glad to hear it.",5:"Wonderful to hear!"};
+document.querySelectorAll('#stars .star').forEach(star => {
+  star.addEventListener('click', () => {
+    const v = parseInt(star.dataset.v);
+    state.rating = v;
+    document.querySelectorAll('#stars .star').forEach(s => {
+      s.classList.toggle('lit', parseInt(s.dataset.v) <= v);
+    });
+    $('starhint').textContent = starHints[v];
+    setTimeout(() => {
+      if (v >= 4){ show('screen-tags'); } else { routeToPrivate(); }
+    }, 450);
+  });
+});
+
+function routeToPrivate(){
+  const msg = encodeURIComponent(`Hi, I recently visited DRB PLUS (${state.location}) and would like to share some feedback about my visit.`);
+  $('btn-whatsapp').href = `https://wa.me/${CONFIG.whatsappNumber}?text=${msg}`;
+  show('screen-private');
+}
+
+// Tags
+document.querySelectorAll('#taggrid .tag').forEach(el => {
+  el.addEventListener('click', () => {
+    el.classList.toggle('selected');
+    const t = el.dataset.tag;
+    if (state.tags.includes(t)) state.tags = state.tags.filter(x => x !== t);
+    else state.tags.push(t);
+    $('btn-generate').disabled = state.tags.length === 0;
+  });
+});
+
+$('btn-generate').addEventListener('click', () => {
+  state.free = $('freetext').value.trim();
+  generateReview();
+});
+$('btn-regen').addEventListener('click', generateReview);
+
+async function generateReview(){
+  show('screen-loading');
+  const styleHints = ["warm and brief","straightforward and specific","quietly grateful","clear and matter-of-fact"];
+  const style = styleHints[Math.floor(Math.random()*styleHints.length)];
+
+  const prompt = `Write a Google review in first person, as a real patient of a psychiatry / de-addiction clinic, ${state.rating} stars.
+Clinic: ${CONFIG.clinicName} (${state.location} branch), doctor: ${CONFIG.doctorName}.
+Things the patient wants reflected, in their own experience (don't just list them, weave them naturally): ${state.tags.join("; ")}.
+${state.free ? "Extra detail from the patient: " + state.free : ""}
+Tone: ${style}. 45-75 words. Plain, human, no marketing language, no exclamation-mark overload, no emojis, no hashtags. Do not invent medical details beyond what's listed. Do not mention that this was AI-written. Output only the review text, nothing else.`;
+
+  try{
+    const res = await fetch(CONFIG.apiEndpoint, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ prompt })
+    });
+    if (!res.ok) throw new Error("bad response");
+    const data = await res.json();
+    renderDraft(data.text || fallbackReview());
+  }catch(e){
+    renderDraft(fallbackReview());
+  }
+}
+
+function fallbackReview(){
+  const bits = state.tags.map(t => t).join(", ");
+  return `My visit to ${CONFIG.clinicName} (${state.location}) was a good experience — ${bits}. ${state.free ? state.free + " " : ""}Would recommend ${CONFIG.doctorName} to anyone looking for genuine, careful care.`;
+}
+
+function renderDraft(text){
+  $('draft-text').value = text.trim();
+  $('pad-loc').textContent = `DRB PLUS · ${state.location}`;
+  show('screen-draft');
+}
+
+$('btn-copy').addEventListener('click', () => {
+  navigator.clipboard.writeText($('draft-text').value);
+  toast("Copied to clipboard");
+});
+
+$('btn-post').addEventListener('click', () => {
+  navigator.clipboard.writeText($('draft-text').value).catch(()=>{});
+  toast("Copied — opening Google");
+  setTimeout(() => window.open(CONFIG.googleReviewUrl, "_blank"), 500);
+});
+
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+</script>
+</body>
+</html>
