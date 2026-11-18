@@ -365,8 +365,13 @@
 const CONFIG = {
   clinicName: "DRB PLUS Neuro-Psychiatric Clinic",
   doctorName: "Dr. Biswadeep Borthakur",
-  // Replace with your actual Google review short link (Google Business Profile → "Ask for reviews" → copy link)
-  googleReviewUrl: "https://g.page/r/REPLACE_WITH_YOUR_PLACE_ID/review",
+  // Google review link for each centre
+  googleReviewUrls: {
+    // "Dr. Biswadeep Borthakur - Neuro Psychiatrist" (306 reviews) — opens the write-review box
+    Margherita: "https://www.google.com/search?q=Dr.+Biswadeep+Borthakur+-+Neuro+Psychiatrist#lrd=0x373f27aba9c856a1:0xcc99f8837e7b1da4,3,,,,",
+    // "Dr Biswadeep Borthakur - Sanjivani Diagnostic" (55 reviews) — official link from Business Profile
+    Digboi: "https://g.page/r/CbQ_UqzrErgfEBM/review"
+  },
   whatsappNumber: "919435166121", // country code + number, no plus or spaces
   // Endpoint of the serverless proxy (see /api/generate-review.js). Leave as-is if deployed together on Vercel.
   apiEndpoint: "/api/generate-review"
@@ -473,7 +478,7 @@ $('btn-copy').addEventListener('click', () => {
 $('btn-post').addEventListener('click', () => {
   navigator.clipboard.writeText($('draft-text').value).catch(()=>{});
   toast("Copied — opening Google");
-  setTimeout(() => window.open(CONFIG.googleReviewUrl, "_blank"), 500);
+  setTimeout(() => window.open(CONFIG.googleReviewUrls[state.location], "_blank"), 500);
 });
 
 function toast(msg){
